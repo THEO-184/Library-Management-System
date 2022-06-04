@@ -8,8 +8,9 @@ const {
 	getHistoryBooks,
 	getScienceBooks,
 } = require("../controllers/books");
+const librarianAuthMiddleware = require("../middleware/adminAuthMiddleware");
 
-router.route("/").post(createBook);
+router.route("/").post(librarianAuthMiddleware, createBook);
 router.route("/english").get(getEnglishBooks);
 router.route("/maths").get(getMathBooks);
 router.route("/history").get(getHistoryBooks);

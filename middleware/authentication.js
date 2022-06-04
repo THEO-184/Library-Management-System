@@ -2,10 +2,10 @@ const jwt = require("jsonwebtoken");
 
 const { Unauthenticated } = require("../errors");
 
-const authenticationMiddleware = (req, res, next) => {
+const authenticationMiddleware = async (req, res, next) => {
 	const authHeader = req.headers.authorization;
 	if (!authHeader || !authHeader.startsWith("Bearer")) {
-		throw new Unauthenticated("user is not authorized");
+		throw new Unauthenticated("user is not authenticated");
 	}
 	const token = authHeader.split(" ")[1];
 	try {
@@ -13,7 +13,7 @@ const authenticationMiddleware = (req, res, next) => {
 		req.userEmail = decodedUser.email;
 		next();
 	} catch (error) {
-		throw new Unauthenticated("user is not authorized");
+		throw new Unauthenticated("user is not authenticated");
 	}
 };
 

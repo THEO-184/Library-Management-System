@@ -4,12 +4,6 @@ const { StatusCodes } = require("http-status-codes");
 const { Unauthenticated } = require("../errors");
 
 const createBook = async (req, res) => {
-	const userEmail = req.userEmail;
-	const user = await User.findOne({ email: userEmail });
-	console.log("user status", user);
-	if (user.status !== "Librarian") {
-		throw new Unauthenticated("user is not authorized to perform this task");
-	}
 	const booksCollection = await Book.create(req.body);
 	res.status(StatusCodes.CREATED).json({
 		success: true,

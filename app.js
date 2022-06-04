@@ -11,12 +11,18 @@ const connectDB = require("./db/connect");
 const notFoundMiddleware = require("./middleware/custom-error");
 const errorMiddleware = require("./middleware/custom-error");
 const authMiddleware = require("./middleware/authentication");
+const librarianAuthMiddleware = require("./middleware/adminAuthMiddleware");
 app.use(express.json());
 
 // routes
 app.use("/api/v1/auth", userRouter);
 app.use("/api/v1/books", authMiddleware, bookRouter);
-app.use("/api/v1/admins", authMiddleware, adminsRouter);
+app.use(
+	"/api/v1/admins",
+	authMiddleware,
+	librarianAuthMiddleware,
+	adminsRouter
+);
 app.use(notFoundMiddleware);
 app.use(errorMiddleware);
 
