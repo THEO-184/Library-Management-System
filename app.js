@@ -3,7 +3,7 @@ require("express-async-errors");
 const express = require("express");
 const app = express();
 // local imporrs
-const userRouter = require("./routes/user");
+const authRouter = require("./routes/user");
 const bookRouter = require("./routes/book");
 const adminsRouter = require("./routes/admins");
 const connectDB = require("./db/connect");
@@ -15,8 +15,8 @@ const librarianAuthMiddleware = require("./middleware/adminAuthMiddleware");
 app.use(express.json());
 
 // routes
-app.use("/api/v1/auth", userRouter);
-app.use("/api/v1/books", authMiddleware, bookRouter);
+app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/books", authMiddleware, librarianAuthMiddleware, bookRouter);
 app.use(
 	"/api/v1/admins",
 	authMiddleware,

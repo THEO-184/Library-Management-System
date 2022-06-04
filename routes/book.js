@@ -3,17 +3,11 @@ const router = express.Router();
 
 const {
 	createBook,
-	getEnglishBooks,
-	getMathBooks,
-	getHistoryBooks,
-	getScienceBooks,
+	updateBook,
+	deleteBook,
+	getBookCollection,
 } = require("../controllers/books");
-const librarianAuthMiddleware = require("../middleware/adminAuthMiddleware");
-
-router.route("/").post(librarianAuthMiddleware, createBook);
-router.route("/english").get(getEnglishBooks);
-router.route("/maths").get(getMathBooks);
-router.route("/history").get(getHistoryBooks);
-router.route("/science").get(getScienceBooks);
+router.route("/").post(createBook).get(getBookCollection);
+router.route("/:id").put(updateBook).delete(deleteBook);
 
 module.exports = router;

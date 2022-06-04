@@ -12,33 +12,52 @@ const createBook = async (req, res) => {
 	});
 };
 
-const getEnglishBooks = async (req, res) => {
-	const englishBooks = await Book.find({ catalogueName: "English" });
-	res.status(StatusCodes.OK).json({ success: true, data: englishBooks });
+const getBookCollection = async (req, res) => {
+	const { name } = req.query;
+	const queryObj = {};
+	if (name) {
+		queryObj.catalogueName = { $regex: `${name}`, $options: "i" };
+	}
+
+	const bookCollection = await Book.find(queryObj);
+	res.status(StatusCodes.OK).json({
+		success: true,
+		total: bookCollection.length,
+		data: bookCollection,
+	});
 };
-const getMathBooks = async (req, res) => {
-	const mathsBook = await Book.find({ catalogueName: "Maths" });
+
+const updateBook = async (req, res) => {
+	const {
+		params: { id },
+		body: { status, catalogueName },
+	} = req;
+
+	const updateOb = {};
+
+	if (status) {
+		updateOb.status = status;
+	}
+	if (catalogueName) {
+		updateOb.catalogueName = catalogueName;
+	}
+
+	const book = await Book.findOneAndUpdate({ _id: id }, updateOb, {
+		new: true,
+		runValidators: true,
+	});
 	res
 		.status(StatusCodes.OK)
-		.json({ success: true, total: mathsBook.length, data: mathsBook });
+		.json({ msg: `book with id ${id} successfully updated`, book });
 };
-const getHistoryBooks = async (req, res) => {
-	const histroyBook = await Book.find({ catalogueName: "History" });
-	res
-		.status(StatusCodes.OK)
-		.json({ success: true, total: histroyBook.length, data: histroyBook });
-};
-const getScienceBooks = async (req, res) => {
-	const scienceBook = await Book.find({ catalogueName: "Science" });
-	res
-		.status(StatusCodes.OK)
-		.json({ success: true, total: scienceBook.length, data: scienceBook });
+const deleteBook = async (req, res) => {
+	const { id } = req.params;
+	res.send(id);
 };
 
 module.exports = {
 	createBook,
-	getEnglishBooks,
-	getMathBooks,
-	getHistoryBooks,
-	getScienceBooks,
+	updateBook,
+	deleteBook,
+	getBookCollection,
 };
