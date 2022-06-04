@@ -13,10 +13,10 @@ const createBook = async (req, res) => {
 };
 
 const getBookCollection = async (req, res) => {
-	const { name } = req.query;
+	const { collection } = req.query;
 	const queryObj = {};
-	if (name) {
-		queryObj.catalogueName = { $regex: `${name}`, $options: "i" };
+	if (collection) {
+		queryObj.catalogueName = { $regex: `${collection}`, $options: "i" };
 	}
 
 	const bookCollection = await Book.find(queryObj);
@@ -25,6 +25,16 @@ const getBookCollection = async (req, res) => {
 		total: bookCollection.length,
 		data: bookCollection,
 	});
+};
+
+const deleteBookCollection = async (req, res) => {
+	const { collection } = req.query;
+	const deleteObj = {};
+	if (collection) {
+		deleteObj.catalogueName = { $regex: `${collection}`, $options: "i" };
+	}
+	const book = await Book.deleteMany(deleteObj);
+	res.status(StatusCodes.OK).json({ book });
 };
 
 const updateBook = async (req, res) => {
@@ -50,9 +60,13 @@ const updateBook = async (req, res) => {
 		.status(StatusCodes.OK)
 		.json({ msg: `book with id ${id} successfully updated`, book });
 };
+
 const deleteBook = async (req, res) => {
 	const { id } = req.params;
-	res.send(id);
+	const book = await Book.findOneAndDelete({ _id: id });
+	res
+		.status(StatusCodes.OK)
+		.json({ msg: `Book with Id ${id} successfully deletd`, book });
 };
 
 module.exports = {
@@ -60,4 +74,5 @@ module.exports = {
 	updateBook,
 	deleteBook,
 	getBookCollection,
+	deleteBookCollection,
 };

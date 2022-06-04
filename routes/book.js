@@ -6,8 +6,14 @@ const {
 	updateBook,
 	deleteBook,
 	getBookCollection,
+	deleteBookCollection,
 } = require("../controllers/books");
-router.route("/").post(createBook).get(getBookCollection);
+
+router
+	.route("/")
+	.post(createBook)
+	.get(getBookCollection)
+	.delete(deleteBookCollection);
 router.route("/:id").put(updateBook).delete(deleteBook);
 
 module.exports = router;
