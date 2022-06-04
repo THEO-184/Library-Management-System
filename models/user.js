@@ -1,6 +1,8 @@
+require("dotenv").config();
 const mongoose = require("mongoose");
 const { Schema, model } = mongoose;
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 const UserSchema = new Schema({
 	email: {
@@ -18,6 +20,14 @@ const UserSchema = new Schema({
 		required: [true, "password required"],
 		min: [6, "password characters should be minimum 6 characters"],
 	},
+
+	// status: {
+	// 	type: String,
+	// 	required: [true, "please provide your status"],
+	// 	enum: ["liberian", "user"],
+	// 	message: "${VALUE} is not supported",
+	// 	default: "user",
+	// },
 });
 
 // middleware to generate alphanumeric password at every password input
@@ -31,4 +41,19 @@ UserSchema.pre("save", async function (next) {
 	}
 });
 
+// generate token for each user instance
+
+UserSchema.methods.createJWT = function () {
+	return jwt.sign(
+		{ userId: this._id, name: this.email },
+		process.env.SECRET_KEY,
+		{ expiresIn: "30d" }
+	);
+};
+
+// confirm password
+UserSchema.methods.confirmPassword = async function (inputPswd) {
+	const isMatched = await bcrypt.compare(inputPswd, this.password);
+	return isMatched;
+};
 module.exports = model("User", UserSchema);
