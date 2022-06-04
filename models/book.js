@@ -26,9 +26,11 @@ const BookSchema = new Schema({
 	},
 	catalogueName: {
 		type: String,
-		required: [3, "please provide the collection in which this book belongs"],
-		min: [3, "Book name shouldnt be less than three"],
-		max: 30,
+		enum: {
+			values: ["Maths", "English", "Science", "History"],
+			message: "{VALUE} is not supported",
+			default: "Science",
+		},
 	},
 });
 module.exports = model("Book", BookSchema);

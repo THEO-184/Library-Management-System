@@ -1,19 +1,26 @@
 const Book = require("../models/book");
+const User = require("../models/auth");
 const { StatusCodes } = require("http-status-codes");
-const { reset } = require("nodemon");
+const { Unauthenticated } = require("../errors");
 
 const createBook = async (req, res) => {
+	const userEmail = req.userEmail;
+	const user = await User.findOne({ email: userEmail });
+	console.log("user status", user);
+	if (user.status !== "Librarian") {
+		throw new Unauthenticated("user is not authorized to perform this task");
+	}
 	const booksCollection = await Book.create(req.body);
-	res
-		.status(StatusCodes.CREATED)
-		.json({ success: true, data: booksCollection });
+	res.status(StatusCodes.CREATED).json({
+		success: true,
+		total: booksCollection.length,
+		data: booksCollection,
+	});
 };
 
 const getEnglishBooks = async (req, res) => {
 	const englishBooks = await Book.find({ catalogueName: "English" });
-	res
-		.status(StatusCodes.OK)
-		.json({ success: true, total: englishBooks.length, data: englishBooks });
+	res.status(StatusCodes.OK).json({ success: true, data: englishBooks });
 };
 const getMathBooks = async (req, res) => {
 	const mathsBook = await Book.find({ catalogueName: "Maths" });

@@ -8,8 +8,8 @@ const UserSchema = new Schema({
 	email: {
 		type: String,
 		required: [true, "email required"],
-		unique: true,
 		trim: true,
+		unique: true,
 		match: [
 			/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
 			"Please provide email",
@@ -21,13 +21,13 @@ const UserSchema = new Schema({
 		min: [6, "password characters should be minimum 6 characters"],
 	},
 
-	// status: {
-	// 	type: String,
-	// 	required: [true, "please provide your status"],
-	// 	enum: ["liberian", "user"],
-	// 	message: "${VALUE} is not supported",
-	// 	default: "user",
-	// },
+	status: {
+		type: String,
+		required: [true, "please provide your status"],
+		enum: ["Librarian", "user"],
+		message: "${VALUE} is not supported",
+		default: "user",
+	},
 });
 
 // middleware to generate alphanumeric password at every password input
@@ -41,11 +41,20 @@ UserSchema.pre("save", async function (next) {
 	}
 });
 
-// generate token for each user instance
+// generate token for signup
 
-UserSchema.methods.createJWT = function () {
+UserSchema.methods.createSignUpJWT = function () {
 	return jwt.sign(
-		{ userId: this._id, name: this.email },
+		{ status: this.status, email: this.email },
+		process.env.SECRET_KEY,
+		{ expiresIn: "30d" }
+	);
+};
+// generate token for login
+
+UserSchema.methods.createLoginJWT = function () {
+	return jwt.sign(
+		{ userId: this._id, email: this.email },
 		process.env.SECRET_KEY,
 		{ expiresIn: "30d" }
 	);

@@ -5,16 +5,18 @@ const app = express();
 // local imporrs
 const userRouter = require("./routes/user");
 const bookRouter = require("./routes/book");
+const adminsRouter = require("./routes/admins");
 const connectDB = require("./db/connect");
 // middleware imports
 const notFoundMiddleware = require("./middleware/custom-error");
 const errorMiddleware = require("./middleware/custom-error");
 const authMiddleware = require("./middleware/authentication");
-
 app.use(express.json());
 
-app.use("/api/v1/users", userRouter);
+// routes
+app.use("/api/v1/auth", userRouter);
 app.use("/api/v1/books", authMiddleware, bookRouter);
+app.use("/api/v1/admins", authMiddleware, adminsRouter);
 app.use(notFoundMiddleware);
 app.use(errorMiddleware);
 

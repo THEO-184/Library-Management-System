@@ -20,6 +20,11 @@ const errorMiddleware = (err, req, res, next) => {
 		)},please choose a different one`;
 		customErr.statusCode = StatusCodes.CONFLICT;
 	}
+	// handle cast error
+	if (err && err.name === "CastError") {
+		customErr.msg = `No resource found with value ${err.value}`;
+		customErr.statusCode = StatusCodes.BAD_REQUEST;
+	}
 	return res.status(customErr.statusCode).send({ msg: customErr.msg });
 };
 

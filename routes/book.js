@@ -9,6 +9,7 @@ const {
 	getScienceBooks,
 } = require("../controllers/books");
 
+router.route("/").post(createBook);
 router.route("/english").get(getEnglishBooks);
 router.route("/maths").get(getMathBooks);
 router.route("/history").get(getHistoryBooks);
