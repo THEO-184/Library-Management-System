@@ -1,5 +1,5 @@
 const User = require("../models/user");
-const { BadRequest, NotFound } = require("../errors");
+const { BadRequest, NotFound, Unauthenticated } = require("../errors");
 const { StatusCodes } = require("http-status-codes");
 
 const register = async (req, res) => {
@@ -17,11 +17,11 @@ const login = async (req, res) => {
 	}
 	const user = await User.findOne({ email });
 	if (!user) {
-		throw new NotFound(`user not found. Please check your credentials`);
+		throw new Unauthenticated(`user not authenticated`);
 	}
 	const isPasswordMathced = await user.confirmPassword(password);
 	if (!isPasswordMathced) {
-		throw new NotFound(`user not found. Please check your credentials`);
+		throw new Unauthenticated(`user not authenticated`);
 	}
 	const token = user.createLoginJWT();
 	res

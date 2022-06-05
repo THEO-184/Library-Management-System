@@ -47,7 +47,7 @@ UserSchema.methods.createSignUpJWT = function () {
 	return jwt.sign(
 		{ status: this.status, email: this.email },
 		process.env.SECRET_KEY,
-		{ expiresIn: "30d" }
+		{ expiresIn: "10m" }
 	);
 };
 // generate token for login
@@ -56,7 +56,7 @@ UserSchema.methods.createLoginJWT = function () {
 	return jwt.sign(
 		{ userId: this._id, email: this.email },
 		process.env.SECRET_KEY,
-		{ expiresIn: "30d" }
+		{ expiresIn: "60s" }
 	);
 };
 
