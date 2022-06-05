@@ -17,7 +17,7 @@ app.use(express.json());
 // routes
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/admin", authMiddleware, librarianAuthMiddleware, adminsRouter);
-app.use("/api/v1/user", authMiddleware, userRouter);
+app.use("/api/v1", authMiddleware, userRouter);
 app.use(notFoundMiddleware);
 app.use(errorMiddleware);
 

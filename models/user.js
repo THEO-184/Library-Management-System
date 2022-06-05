@@ -56,7 +56,7 @@ UserSchema.methods.createLoginJWT = function () {
 	return jwt.sign(
 		{ userId: this._id, email: this.email },
 		process.env.SECRET_KEY,
-		{ expiresIn: "60s" }
+		{ expiresIn: "300s" }
 	);
 };
 

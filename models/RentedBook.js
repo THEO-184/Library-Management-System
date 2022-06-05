@@ -1,9 +1,7 @@
-// books schema
 const mongoose = require("mongoose");
-
 const { Schema, model } = mongoose;
 
-const BookSchema = new Schema({
+const RentedBookSchema = new Schema({
 	name: {
 		type: String,
 		required: [true, "Please provide book name"],
@@ -32,4 +30,5 @@ const BookSchema = new Schema({
 		},
 	},
 });
-module.exports = model("Book", BookSchema);
+
+module.exports = model("RentedBook", RentedBookSchema);

@@ -1,5 +1,6 @@
 const User = require("../models/user");
 const Book = require("../models/book");
+const RentedBook = require("../models/RentedBook");
 const { StatusCodes } = require("http-status-codes");
 const { NotFound, CustomApiError } = require("../errors");
 
@@ -27,8 +28,7 @@ const createBook = async (req, res) => {
 	const booksCollection = await Book.create(req.body);
 	res.status(StatusCodes.CREATED).json({
 		success: true,
-		total: booksCollection.length,
-		data: booksCollection,
+		msg: `${booksCollection.length} successfully added to books catalogue`,
 	});
 };
 
@@ -56,13 +56,9 @@ const getBook = async (req, res) => {
 	const { id } = req.params;
 	const book = await Book.findOne({ _id: id });
 	if (!book) {
-		throw new NotFound(`No book with id ${id} was found in the libarary`);
+		return res.status(StatusCodes.OK).json({ msg: "book is unavailable" });
 	}
-	if (book.status === "unavailable") {
-		return res
-			.status(StatusCodes.OK)
-			.json({ msg: `Book with id ${id} currently unavailable` });
-	}
+
 	res.status(StatusCodes.OK).json({ success: true, book });
 };
 
@@ -114,6 +110,7 @@ const deleteBook = async (req, res) => {
 	if (!book) {
 		throw new NotFound(`No book with id ${id} was found in the libarary`);
 	}
+
 	res
 		.status(StatusCodes.OK)
 		.json({ msg: `Book with Id ${id} successfully deletd`, book });
