@@ -27,7 +27,14 @@ const BookSchema = new Schema({
 	catalogueName: {
 		type: String,
 		enum: {
-			values: ["Maths", "English", "Science", "History", "Technology"],
+			values: [
+				"Maths",
+				"English",
+				"Science",
+				"History",
+				"Technology",
+				"French",
+			],
 			message: "{VALUE} is not supported",
 			default: "Science",
 		},

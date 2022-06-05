@@ -1,5 +1,5 @@
 const { Unauthenticated } = require("../errors");
-const User = require("../models/auth");
+const User = require("../models/user");
 
 const librarianAuthMiddleware = async (req, res, next) => {
 	const userEmail = req.userEmail;
