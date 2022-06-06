@@ -2,7 +2,7 @@ const User = require("../models/user");
 const Book = require("../models/book");
 const RentedBook = require("../models/RentedBook");
 const { StatusCodes } = require("http-status-codes");
-const { NotFound, CustomApiError } = require("../errors");
+const { NotFound, CustomApiError, BadRequest } = require("../errors");
 
 const createLibrarian = async (req, res) => {
 	const user = await User.create({ ...req.body });
@@ -13,7 +13,7 @@ const createLibrarian = async (req, res) => {
 };
 
 const removeLibrariansOrUser = async (req, res) => {
-	const { email } = req.params;
+	const { email } = req.body;
 	const user = await User.findOneAndDelete({ email });
 	if (!user) {
 		throw new NotFound(`No user with email ${email}`);
@@ -34,12 +34,12 @@ const createBook = async (req, res) => {
 
 const getBookCollection = async (req, res) => {
 	const { collection } = req.query;
-	const queryObj = {};
+	const queryObj = { status: "rental" };
 	if (collection) {
 		queryObj.catalogueName = { $regex: `${collection}`, $options: "i" };
 	}
 
-	const bookCollection = await Book.find(queryObj);
+	const bookCollection = await Book.find(queryObj).sort("catalogueName");
 	if (!bookCollection) {
 		throw new NotFound(
 			`No collection in the library bears the name ${collection}`
@@ -56,10 +56,18 @@ const getBook = async (req, res) => {
 	const { id } = req.params;
 	const book = await Book.findOne({ _id: id });
 	if (!book) {
-		return res.status(StatusCodes.OK).json({ msg: "book is unavailable" });
+		throw new BadRequest(`No book with id ${id}`);
 	}
+	if (book.status === "unavailable") {
+		return res
+			.status(StatusCodes.OK)
+			.json({ msg: `Book with id ${id} is currently unavailable` });
+	}
+	const { _id, name, author } = book;
 
-	res.status(StatusCodes.OK).json({ success: true, book });
+	res
+		.status(StatusCodes.OK)
+		.json({ success: true, book: { _id, name, author } });
 };
 
 const deleteBookCollection = async (req, res) => {

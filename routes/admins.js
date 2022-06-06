@@ -13,8 +13,7 @@ const {
 	deleteBookCollection,
 } = require("../controllers/admins");
 
-router.route("/").post(createLibrarian);
-router.route("/:email").delete(removeLibrariansOrUser);
+router.route("/").post(createLibrarian).delete(removeLibrariansOrUser);
 router
 	.route("/books")
 	.post(createBook)

@@ -16,17 +16,19 @@ const BookSchema = new Schema({
 		min: [3, "author name should exceed 3 characters"],
 		max: 30,
 	},
+	status: {
+		type: String,
+		required: [true, "please provide book status"],
+		enum: {
+			values: ["rental", "unavailable"],
+			message: "{VALUE} is not supported",
+			default: "rental",
+		},
+	},
 	catalogueName: {
 		type: String,
 		enum: {
-			values: [
-				"Maths",
-				"English",
-				"Science",
-				"History",
-				"Technology",
-				"French",
-			],
+			values: ["Maths", "English", "Science", "History", "Tech", "French"],
 			message: "{VALUE} is not supported",
 			default: "Science",
 		},
