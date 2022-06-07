@@ -1,6 +1,6 @@
 const User = require("../models/user");
 const Book = require("../models/book");
-const RentedBook = require("../models/RentedBook");
+const Request = require("../models/request");
 const { StatusCodes } = require("http-status-codes");
 const { NotFound, CustomApiError, BadRequest } = require("../errors");
 
@@ -52,24 +52,6 @@ const getBookCollection = async (req, res) => {
 	});
 };
 
-const getBook = async (req, res) => {
-	const { id } = req.params;
-	const book = await Book.findOne({ _id: id });
-	if (!book) {
-		throw new BadRequest(`No book with id ${id}`);
-	}
-	if (book.status === "unavailable") {
-		return res
-			.status(StatusCodes.OK)
-			.json({ msg: `Book with id ${id} is currently unavailable` });
-	}
-	const { _id, name, author } = book;
-
-	res
-		.status(StatusCodes.OK)
-		.json({ success: true, book: { _id, name, author } });
-};
-
 const deleteBookCollection = async (req, res) => {
 	const { collection } = req.query;
 	const deleteObj = {};
@@ -88,7 +70,7 @@ const deleteBookCollection = async (req, res) => {
 const updateBook = async (req, res) => {
 	const {
 		params: { id },
-		body: { status, catalogueName },
+		body: { status, assignedTo },
 	} = req;
 
 	const updateOb = {};
@@ -96,8 +78,8 @@ const updateBook = async (req, res) => {
 	if (status) {
 		updateOb.status = status;
 	}
-	if (catalogueName) {
-		updateOb.catalogueName = catalogueName;
+	if (assignedTo) {
+		updateOb.assignedTo = assignedTo;
 	}
 
 	const book = await Book.findOneAndUpdate({ _id: id }, updateOb, {
@@ -127,7 +109,7 @@ const deleteBook = async (req, res) => {
 module.exports = {
 	createLibrarian,
 	removeLibrariansOrUser,
-	getBook,
+
 	createBook,
 	updateBook,
 	deleteBook,

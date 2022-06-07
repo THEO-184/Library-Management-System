@@ -9,7 +9,7 @@ const UserSchema = new Schema({
 		type: String,
 		required: [true, "email required"],
 		trim: true,
-		unique: true,
+		// unique: true,
 		match: [
 			/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
 			"Please provide email",
@@ -56,7 +56,7 @@ UserSchema.methods.createLoginJWT = function () {
 	return jwt.sign(
 		{ userId: this._id, email: this.email },
 		process.env.SECRET_KEY,
-		{ expiresIn: "300s" }
+		{ expiresIn: "800s" }
 	);
 };
 

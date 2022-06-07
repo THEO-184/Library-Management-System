@@ -5,7 +5,6 @@ const router = express.Router();
 const {
 	createLibrarian,
 	removeLibrariansOrUser,
-	getBook,
 	createBook,
 	updateBook,
 	deleteBook,
@@ -19,6 +18,6 @@ router
 	.post(createBook)
 	.get(getBookCollection)
 	.delete(deleteBookCollection);
-router.route("/books/:id").put(updateBook).delete(deleteBook).get(getBook);
+router.route("/books/:id").put(updateBook).delete(deleteBook);
 
 module.exports = router;

@@ -2,7 +2,7 @@ const { Unauthenticated } = require("../errors");
 const User = require("../models/user");
 
 const librarianAuthMiddleware = async (req, res, next) => {
-	const userEmail = req.userEmail;
+	const { userEmail } = req.userDetails;
 	try {
 		const user = await User.findOne({ email: userEmail });
 		if (user.status !== "Librarian") {

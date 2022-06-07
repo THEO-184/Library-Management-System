@@ -10,7 +10,10 @@ const authenticationMiddleware = async (req, res, next) => {
 	const token = authHeader.split(" ")[1];
 	try {
 		const decodedUser = jwt.verify(token, process.env.SECRET_KEY);
-		req.userEmail = decodedUser.email;
+		req.userDetails = {
+			userEmail: decodedUser.email,
+			userId: decodedUser.userId,
+		};
 		next();
 	} catch (error) {
 		throw new Unauthenticated("user is not authenticated");
