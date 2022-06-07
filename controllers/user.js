@@ -29,29 +29,32 @@ const changePassword = async (req, res) => {
 	res.status(StatusCodes.OK).json({ success: true, updateUser });
 };
 
-const getBook = async (req, res) => {
+const requestBook = async (req, res) => {
 	const {
 		userDetails: { userEmail, userId },
-		params: { id },
+		body: { id },
 	} = req;
 
-	const book = await Book.find({ _id: id });
+	const book = await Book.findOne({ _id: id });
 	if (!book) {
-		throw new BadRequest(`No book with id ${id}`);
-	}
-
-	if (book.status === "unavailable") {
-		return res
-			.status(StatusCodes.OK)
-			.json({ msg: `Book with id ${id} is currently unavailable` });
+		throw new NotFound(
+			`No Book with id ${id} was found in the books catalogue`
+		);
 	}
 
 	const request = await Request.create({ userId, bookID: id });
-	const { _id, name, author } = book;
 
-	res
-		.status(StatusCodes.OK)
-		.json({ success: true, book: { _id, name, author } });
+	const requestedBook = {
+		msg: `request for book with id ${id} successful`,
+		title: book?.name,
+		author: book?.author,
+		category: book?.collectionName,
+	};
+
+	res.status(StatusCodes.CREATED).json({
+		success: true,
+		requestedBook,
+	});
 };
 
-module.exports = { changePassword, getBook };
+module.exports = { changePassword, requestBook };
