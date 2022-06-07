@@ -42,17 +42,28 @@ const requestBook = async (req, res) => {
 		);
 	}
 
+	const isBookAlreadyRequestedBySameUser = await Request.findOne({
+		bookID: id,
+		userId,
+	});
+
+	if (isBookAlreadyRequestedBySameUser) {
+		return res
+			.status(StatusCodes.OK)
+			.json({ msg: `You already have a request placed for this book.` });
+	}
+
 	const request = await Request.create({ userId, bookID: id });
 
 	const requestedBook = {
-		msg: `request for book with id ${id} successful`,
 		title: book?.name,
 		author: book?.author,
-		category: book?.collectionName,
+		category: book?.catalogueName,
 	};
 
 	res.status(StatusCodes.CREATED).json({
 		success: true,
+		msg: `request for book with id ${id} successful`,
 		requestedBook,
 	});
 };
@@ -60,7 +71,9 @@ const requestBook = async (req, res) => {
 const getRequestedBooks = async (req, res) => {
 	const { userEmail } = req.userDetails;
 	const requests = await Request.find({ email: userEmail });
-	res.status(StatusCodes.OK).json({ requests });
+	res
+		.status(StatusCodes.OK)
+		.json({ success: true, total: requests.length, requests });
 };
 
 module.exports = { changePassword, requestBook, getRequestedBooks };

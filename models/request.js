@@ -13,7 +13,7 @@ const requestsSchema = new Schema({
 	},
 	isRequested: {
 		type: Boolean,
-		default: false,
+		default: true,
 	},
 	isAvailable: {
 		type: Boolean,

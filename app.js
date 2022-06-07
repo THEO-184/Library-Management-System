@@ -2,6 +2,7 @@ require("dotenv").config();
 require("express-async-errors");
 const express = require("express");
 const app = express();
+const logger = require("morgan");
 // local imporrs
 const authRouter = require("./routes/auth");
 const adminsRouter = require("./routes/admins");
@@ -15,6 +16,7 @@ const librarianAuthMiddleware = require("./middleware/adminAuthMiddleware");
 app.use(express.json());
 
 // routes
+app.use(logger("dev"));
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/admin", authMiddleware, librarianAuthMiddleware, adminsRouter);
 app.use("/api/v1", authMiddleware, userRouter);

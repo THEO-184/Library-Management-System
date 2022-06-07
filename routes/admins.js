@@ -9,6 +9,7 @@ const {
 	updateBook,
 	deleteBook,
 	getBookCollection,
+	getAllBookRequests,
 	deleteBookCollection,
 } = require("../controllers/admins");
 
@@ -19,5 +20,6 @@ router
 	.get(getBookCollection)
 	.delete(deleteBookCollection);
 router.route("/books/:id").put(updateBook).delete(deleteBook);
+router.route("/books/requests").get(getAllBookRequests);
 
 module.exports = router;

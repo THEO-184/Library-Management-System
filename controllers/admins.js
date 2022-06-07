@@ -106,10 +106,19 @@ const deleteBook = async (req, res) => {
 		.json({ msg: `Book with Id ${id} successfully deletd`, book });
 };
 
+const getAllBookRequests = async (req, res) => {
+	const requestedBooks = await Request.find({});
+	res.status(StatusCodes.OK).json({
+		success: true,
+		total: requestedBooks.length,
+		data: requestedBooks,
+	});
+};
+
 module.exports = {
 	createLibrarian,
 	removeLibrariansOrUser,
-
+	getAllBookRequests,
 	createBook,
 	updateBook,
 	deleteBook,
