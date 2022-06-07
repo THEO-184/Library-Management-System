@@ -57,4 +57,10 @@ const requestBook = async (req, res) => {
 	});
 };
 
-module.exports = { changePassword, requestBook };
+const getRequestedBooks = async (req, res) => {
+	const { userEmail } = req.userDetails;
+	const requests = await Request.find({ email: userEmail });
+	res.status(StatusCodes.OK).json({ requests });
+};
+
+module.exports = { changePassword, requestBook, getRequestedBooks };
