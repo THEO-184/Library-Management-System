@@ -120,8 +120,8 @@ const getAllBookRequests = async (req, res) => {
 
 const approveOrDisapproveBook = async (req, res) => {
 	const {
-		params: { id: BookID },
-		body: { isApproved, isBookReturned, isAvailable, isRequested, userId },
+		params: { id },
+		body: { isApproved, isBookReturned, isAvailable, isRequested },
 	} = req;
 
 	const updateObj = {};
@@ -138,15 +138,13 @@ const approveOrDisapproveBook = async (req, res) => {
 	if (isRequested) {
 		updateObj.isRequested = isRequested;
 	}
-	const requestedBook = await Request.findOneAndUpdate(
-		{ userId, BookID },
-		updateObj,
-		{ new: true, runValidators: true }
-	);
+	const requestedBook = await Request.findOneAndUpdate({ _id: id }, updateObj, {
+		new: true,
+		runValidators: true,
+	});
 
 	res.status(StatusCodes.OK).json({
 		success: true,
-		msg: `Book with id ${BookID} succesfully updated`,
 		data: requestedBook,
 	});
 };
