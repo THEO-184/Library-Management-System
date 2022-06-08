@@ -3,6 +3,7 @@ const { route } = require("express/lib/router");
 const router = express.Router();
 
 const {
+	updateAllBooks,
 	createLibrarian,
 	removeLibrariansOrUser,
 	createBook,
@@ -19,7 +20,8 @@ router
 	.route("/books")
 	.post(createBook)
 	.get(getBookCollection)
-	.delete(deleteBookCollection);
+	.delete(deleteBookCollection)
+	.put(updateAllBooks);
 router.route("/books/:id").put(updateBook).delete(deleteBook);
 router.route("/books/requests").get(getAllBookRequests);
 router.route("/books/requests/:id").put(approveOrDisapproveBook);

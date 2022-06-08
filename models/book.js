@@ -16,23 +16,10 @@ const BookSchema = new Schema({
 		min: [3, "author name should exceed 3 characters"],
 		max: 30,
 	},
-	status: {
-		type: String,
+	isAvailable: {
+		type: Boolean,
 		required: [true, "please provide book status"],
-		enum: {
-			values: ["rental", "unavailable"],
-			message: "{VALUE} is not supported",
-			default: "rental",
-		},
-	},
-	assignedTo: {
-		type: String,
-		trim: true,
-		unique: true,
-		match: [
-			/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
-			"Please provide email",
-		],
+		default: true,
 	},
 	catalogueName: {
 		type: String,

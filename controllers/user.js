@@ -81,12 +81,13 @@ const getRequestedBooks = async (req, res) => {
 			},
 		},
 	];
-	let newArr = await Request.aggregate(lookUpObj);
+	let newArr = await Request.aggregate(lookUpObj).sort("-createdAt");
 
 	let requestBooks = newArr.map((item) => {
-		const { userId, isApproved, bookID, book_details } = item;
+		const { userId, isApproved, bookID, book_details, createdAt } = item;
 		const { name, author, catalogueName } = book_details[0];
 		return {
+			createdAt,
 			userId,
 			bookID,
 			isApproved,

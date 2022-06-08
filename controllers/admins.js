@@ -34,7 +34,7 @@ const createBook = async (req, res) => {
 
 const getBookCollection = async (req, res) => {
 	const { collection } = req.query;
-	const queryObj = { status: "rental" };
+	const queryObj = { isAvailable: true };
 	if (collection) {
 		queryObj.catalogueName = { $regex: `${collection}`, $options: "i" };
 	}
@@ -110,7 +110,7 @@ const getAllBookRequests = async (req, res) => {
 	const requestedBooks = await Request.find({
 		isRequested: true,
 		isApproved: false,
-	});
+	}).sort("-createdAt");
 	res.status(StatusCodes.OK).json({
 		success: true,
 		total: requestedBooks.length,
@@ -121,7 +121,7 @@ const getAllBookRequests = async (req, res) => {
 const approveOrDisapproveBook = async (req, res) => {
 	const {
 		params: { id },
-		body: { isApproved, isBookReturned, isAvailable, isRequested },
+		body: { isApproved, isBookReturned, isAvailable, isRequested, bookID },
 	} = req;
 
 	const updateObj = {};
@@ -143,10 +143,23 @@ const approveOrDisapproveBook = async (req, res) => {
 		runValidators: true,
 	});
 
+	const updateBookCollection = await Book.findOneAndUpdate(
+		{ _id: bookID },
+		{ isAvailable: !!isApproved ? false : true }
+	);
+
 	res.status(StatusCodes.OK).json({
 		success: true,
 		data: requestedBook,
 	});
+};
+
+const updateAllBooks = async (req, res) => {
+	const { isAvailable } = req.body;
+
+	const books = await Book.updateMany({}, { isAvailable });
+
+	res.status(StatusCodes.OK).json({ books });
 };
 
 module.exports = {
@@ -159,4 +172,5 @@ module.exports = {
 	getBookCollection,
 	deleteBookCollection,
 	approveOrDisapproveBook,
+	updateAllBooks,
 };
