@@ -115,6 +115,39 @@ const getAllBookRequests = async (req, res) => {
 	});
 };
 
+const approveOrDisapproveBook = async (req, res) => {
+	const {
+		params: { id: BookID },
+		body: { isApproved, isBookReturned, isAvailable, isRequested, userId },
+	} = req;
+
+	const updateObj = {};
+
+	if (isApproved) {
+		updateObj.isApproved = isApproved;
+	}
+	if (isBookReturned) {
+		updateObj.isBookReturned = isBookReturned;
+	}
+	if (isAvailable) {
+		updateObj.isAvailable = isAvailable;
+	}
+	if (isRequested) {
+		updateObj.isRequested = isRequested;
+	}
+	const requestedBook = await Request.findOneAndUpdate(
+		{ userId, BookID },
+		updateObj,
+		{ new: true, runValidators: true }
+	);
+
+	res.status(StatusCodes.OK).json({
+		success: true,
+		msg: `Book with id ${BookID} succesfully updated`,
+		data: requestedBook,
+	});
+};
+
 module.exports = {
 	createLibrarian,
 	removeLibrariansOrUser,
@@ -124,4 +157,5 @@ module.exports = {
 	deleteBook,
 	getBookCollection,
 	deleteBookCollection,
+	approveOrDisapproveBook,
 };

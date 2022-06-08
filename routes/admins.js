@@ -11,6 +11,7 @@ const {
 	getBookCollection,
 	getAllBookRequests,
 	deleteBookCollection,
+	approveOrDisapproveBook,
 } = require("../controllers/admins");
 
 router.route("/").post(createLibrarian).delete(removeLibrariansOrUser);
@@ -21,5 +22,6 @@ router
 	.delete(deleteBookCollection);
 router.route("/books/:id").put(updateBook).delete(deleteBook);
 router.route("/books/requests").get(getAllBookRequests);
+router.route("/books/requests/:id").put(approveOrDisapproveBook);
 
 module.exports = router;
