@@ -42,16 +42,16 @@ const requestBook = async (req, res) => {
 		);
 	}
 
-	const isBookAlreadyRequestedBySameUser = await Request.findOne({
-		bookID: id,
-		userId,
-	});
+	// const isBookAlreadyRequestedBySameUser = await Request.findOne({
+	// 	bookID: id,
+	// 	userId,
+	// });
 
-	if (isBookAlreadyRequestedBySameUser) {
-		return res
-			.status(StatusCodes.OK)
-			.json({ msg: `You already have a request placed for this book.` });
-	}
+	// if (isBookAlreadyRequestedBySameUser) {
+	// 	return res
+	// 		.status(StatusCodes.OK)
+	// 		.json({ msg: `You already have a request placed for this book.` });
+	// }
 
 	const request = await Request.create({ userId, bookID: id });
 
@@ -70,8 +70,38 @@ const requestBook = async (req, res) => {
 	});
 };
 
+const returnBook = async (req, res) => {
+	const { bookID, userId } = req.body;
+	const request = await Request.findOneAndUpdate(
+		{ bookID, userId },
+		{ isBookReturned: true, isAvailable: true, isRequested: false },
+		{ new: true, runValidators: true }
+	);
+
+	if (Object.keys(request).length === 0) {
+		throw new NotFound(`please check your provided user ID and book id well`);
+	}
+
+	const book = await Book.findOneAndUpdate(
+		{ _id: bookID },
+		{ isAvailable: true },
+		{ new: true, runValidators: true }
+	);
+
+	if (Object.keys(book).length === 0) {
+		throw new NotFound(`please check your provided user ID and book id well`);
+	}
+
+	res.status(StatusCodes.OK).json({ request, book });
+};
+
 const getRequestedBooks = async (req, res) => {
 	let lookUpObj = [
+		{
+			$match: {
+				isBookReturned: false,
+			},
+		},
 		{
 			$lookup: {
 				from: "books",
@@ -81,12 +111,13 @@ const getRequestedBooks = async (req, res) => {
 			},
 		},
 	];
-	let newArr = await Request.aggregate(lookUpObj);
+	let newArr = await Request.aggregate(lookUpObj).sort("-createdAt");
 
 	let requestBooks = newArr.map((item) => {
-		const { userId, isApproved, bookID, book_details } = item;
+		const { userId, isApproved, bookID, book_details, createdAt } = item;
 		const { name, author, catalogueName } = book_details[0];
 		return {
+			createdAt,
 			userId,
 			bookID,
 			isApproved,
@@ -101,4 +132,4 @@ const getRequestedBooks = async (req, res) => {
 	});
 };
 
-module.exports = { changePassword, requestBook, getRequestedBooks };
+module.exports = { changePassword, requestBook, getRequestedBooks, returnBook };
