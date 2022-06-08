@@ -64,16 +64,41 @@ const requestBook = async (req, res) => {
 	res.status(StatusCodes.CREATED).json({
 		success: true,
 		msg: `request for book with id ${id} successful`,
-		requestedBook,
+		data: {
+			...requestedBook,
+		},
 	});
 };
 
 const getRequestedBooks = async (req, res) => {
-	const { userEmail } = req.userDetails;
-	const requests = await Request.find({ email: userEmail });
-	res
-		.status(StatusCodes.OK)
-		.json({ success: true, total: requests.length, requests });
+	let lookUpObj = [
+		{
+			$lookup: {
+				from: "books",
+				localField: "bookID",
+				foreignField: "_id",
+				as: "book_details",
+			},
+		},
+	];
+	let newArr = await Request.aggregate(lookUpObj);
+
+	let requestBooks = newArr.map((item) => {
+		const { userId, isApproved, bookID, book_details } = item;
+		const { name, author, catalogueName } = book_details[0];
+		return {
+			userId,
+			bookID,
+			isApproved,
+			details: { name, author, catalogueName },
+		};
+	});
+
+	res.status(StatusCodes.OK).json({
+		success: true,
+		total: requestBooks.length,
+		data: requestBooks,
+	});
 };
 
 module.exports = { changePassword, requestBook, getRequestedBooks };

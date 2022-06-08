@@ -107,7 +107,10 @@ const deleteBook = async (req, res) => {
 };
 
 const getAllBookRequests = async (req, res) => {
-	const requestedBooks = await Request.find({});
+	const requestedBooks = await Request.find({
+		isRequested: true,
+		isApproved: false,
+	});
 	res.status(StatusCodes.OK).json({
 		success: true,
 		total: requestedBooks.length,
