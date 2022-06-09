@@ -13,15 +13,15 @@ const createLibrarian = async (req, res) => {
 };
 
 const removeLibrariansOrUser = async (req, res) => {
-	const { email } = req.body;
-	const user = await User.findOneAndDelete({ email });
+	const { id } = req.params;
+	const user = await User.findOneAndDelete({ _id: id });
 	if (!user) {
-		throw new NotFound(`No user with email ${email}`);
+		throw new NotFound(`No user with id ${id}`);
 	}
 
 	res
 		.status(StatusCodes.CREATED)
-		.json({ msg: `user with id ${email} successfully deleted` });
+		.json({ msg: `user with id ${id} successfully deleted` });
 };
 
 const createBook = async (req, res) => {

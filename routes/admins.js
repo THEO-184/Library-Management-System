@@ -15,6 +15,7 @@ const {
 } = require("../controllers/admins");
 
 router.route("/").post(createLibrarian).delete(removeLibrariansOrUser);
+router.route("/:id").delete(removeLibrariansOrUser);
 router
 	.route("/books")
 	.post(createBook)
