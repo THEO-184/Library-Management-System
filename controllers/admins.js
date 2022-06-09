@@ -143,14 +143,24 @@ const approveOrDisapproveBook = async (req, res) => {
 		runValidators: true,
 	});
 
+	if (!requestedBook) {
+		throw new NotFound(`please check your provided user ID and book id well`);
+	}
+
 	const updateBookCollection = await Book.findOneAndUpdate(
 		{ _id: bookID },
-		{ isAvailable: !!isApproved ? false : true }
+		{ isAvailable: isApproved ? false : true },
+		{ new: true, runValidators: true }
 	);
+
+	if (!updateBookCollection) {
+		throw new NotFound(`please check your provided user ID and book id well`);
+	}
 
 	res.status(StatusCodes.OK).json({
 		success: true,
 		data: requestedBook,
+		updateBookCollection,
 	});
 };
 

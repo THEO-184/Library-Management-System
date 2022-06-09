@@ -42,16 +42,16 @@ const requestBook = async (req, res) => {
 		);
 	}
 
-	// const isBookAlreadyRequestedBySameUser = await Request.findOne({
-	// 	bookID: id,
-	// 	userId,
-	// });
+	const isBookAlreadyRequestedBySameUser = await Request.findOne({
+		bookID: id,
+		userId,
+	});
 
-	// if (isBookAlreadyRequestedBySameUser) {
-	// 	return res
-	// 		.status(StatusCodes.OK)
-	// 		.json({ msg: `You already have a request placed for this book.` });
-	// }
+	if (isBookAlreadyRequestedBySameUser) {
+		return res
+			.status(StatusCodes.OK)
+			.json({ msg: `You already have a request placed for this book.` });
+	}
 
 	const request = await Request.create({ userId, bookID: id });
 
@@ -78,7 +78,7 @@ const returnBook = async (req, res) => {
 		{ new: true, runValidators: true }
 	);
 
-	if (Object.keys(request).length === 0) {
+	if (!request) {
 		throw new NotFound(`please check your provided user ID and book id well`);
 	}
 
@@ -88,7 +88,7 @@ const returnBook = async (req, res) => {
 		{ new: true, runValidators: true }
 	);
 
-	if (Object.keys(book).length === 0) {
+	if (!book) {
 		throw new NotFound(`please check your provided user ID and book id well`);
 	}
 
