@@ -3,7 +3,6 @@ const mongoose = require("mongoose");
 const { Schema, model } = mongoose;
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-
 const UserSchema = new Schema({
 	email: {
 		type: String,

@@ -7,6 +7,7 @@ const helmet = require("helmet");
 const cors = require("cors");
 const xss = require("xss-clean");
 const rateLimiter = require("express-rate-limit");
+const cookieParser = require("cookie-parser");
 // const logger = require("morgan");
 // local imporrs
 const authRouter = require("./routes/auth");
@@ -19,6 +20,7 @@ const notFoundMiddleware = require("./middleware/custom-error");
 const errorMiddleware = require("./middleware/custom-error");
 const authMiddleware = require("./middleware/authentication");
 const librarianAuthMiddleware = require("./middleware/adminAuthMiddleware");
+const { signedCookie } = require("cookie-parser");
 
 // extra security packages
 app.use(
@@ -31,6 +33,7 @@ app.use(helmet());
 app.use(cors());
 app.use(xss());
 app.use(express.json());
+app.use(cookieParser(process.env.SECRET_KEY));
 
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/admin", authMiddleware, librarianAuthMiddleware, adminsRouter);
