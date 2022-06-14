@@ -1,22 +1,18 @@
 const jwt = require("jsonwebtoken");
 
-const { Unauthenticated } = require("../errors");
+const { UnauthorizedError, Unauthenticated } = require("../errors");
 
 const authenticationMiddleware = async (req, res, next) => {
-	const authHeader = req.headers.authorization;
-	if (!authHeader || !authHeader.startsWith("Bearer")) {
-		throw new Unauthenticated("user is not authenticated");
-	}
-	const token = authHeader.split(" ")[1];
 	try {
-		const decodedUser = jwt.verify(token, process.env.SECRET_KEY);
-		req.userDetails = {
-			userEmail: decodedUser.email,
-			userId: decodedUser.userId,
-		};
+		const token = req.signedCookies.token;
+		if (!token) {
+			throw new Unauthenticated("user not authenticated");
+		}
+		const { email, status } = jwt.verify(token, process.env.SECRET_KEY);
+		req.userDetails = { userEmail: email, status };
 		next();
 	} catch (error) {
-		throw new Unauthenticated("user is not authenticated");
+		throw new Unauthenticated("user not authenticated");
 	}
 };
 
