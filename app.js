@@ -36,7 +36,12 @@ app.use(express.json());
 app.use(cookieParser(process.env.SECRET_KEY));
 
 app.use("/api/v1/auth", authRouter);
-app.use("/api/v1/admin", authMiddleware, librarianAuthMiddleware, adminsRouter);
+app.use(
+	"/api/v1/admin",
+	authMiddleware,
+	librarianAuthMiddleware("Librarian"),
+	adminsRouter
+);
 app.use("/api/v1/user", authMiddleware, userRouter);
 app.use(notFoundMiddleware);
 app.use(errorMiddleware);

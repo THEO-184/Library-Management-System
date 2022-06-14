@@ -1,17 +1,15 @@
-const { Unauthenticated } = require("../errors");
+const { Unauthenticated, UnauthorizedError } = require("../errors");
 const User = require("../models/user");
 
-const librarianAuthMiddleware = async (req, res, next) => {
-	const { userEmail } = req.userDetails;
-	try {
-		const user = await User.findOne({ email: userEmail });
-		if (user.status !== "Librarian") {
-			throw new Unauthenticated("user is not authorized to perform this task");
+const librarianAuthMiddleware = (...roles) => {
+	return (req, res, next) => {
+		if (!roles.includes(req.userDetails.status)) {
+			throw new UnauthorizedError(
+				"user not authorized to access this resource"
+			);
 		}
 		next();
-	} catch (error) {
-		throw new Unauthenticated("user is not authorized to perform this task");
-	}
+	};
 };
 
 module.exports = librarianAuthMiddleware;
