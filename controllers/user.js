@@ -96,39 +96,42 @@ const returnBook = async (req, res) => {
 };
 
 const getRequestedBooks = async (req, res) => {
-	let lookUpObj = [
-		{
-			$match: {
-				isBookReturned: false,
-			},
-		},
-		{
-			$lookup: {
-				from: "books",
-				localField: "bookID",
-				foreignField: "_id",
-				as: "book_details",
-			},
-		},
-	];
-	let newArr = await Request.aggregate(lookUpObj).sort("-createdAt");
+	// let lookUpObj = [
+	// 	{
+	// 		$match: {
+	// 			isBookReturned: false,
+	// 		},
+	// 	},
+	// 	{
+	// 		$lookup: {
+	// 			from: "books",
+	// 			localField: "bookID",
+	// 			foreignField: "_id",
+	// 			as: "book_details",
+	// 		},
+	// 	},
+	// ];
+	// let newArr = await Request.aggregate(lookUpObj).sort("-createdAt");
+	let newArr = await Request.find({
+		userId: req.userDetails.userId,
+	}).populate({ path: "bookID", select: "name author catalogueName" });
 
-	let requestBooks = newArr.map((item) => {
-		const { userId, isApproved, bookID, book_details, createdAt } = item;
-		const { name, author, catalogueName } = book_details[0];
-		return {
-			createdAt,
-			userId,
-			bookID,
-			isApproved,
-			details: { name, author, catalogueName },
-		};
-	});
+	// let requestBooks = newArr.map((item) => {
+	// 	const { userId, isApproved, bookID, book_details, createdAt } = item;
+	// 	const { name, author, catalogueName } = book_details[0];
+	// 	return {
+	// 		createdAt,
+	// 		userId,
+	// 		bookID,
+	// 		isApproved,
+	// 		details: { name, author, catalogueName },
+	// 	};
+	// });
 
 	res.status(StatusCodes.OK).json({
 		success: true,
-		total: requestBooks.length,
-		data: requestBooks,
+		total: newArr.length,
+		data: newArr,
 	});
 };
 

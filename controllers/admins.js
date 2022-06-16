@@ -110,7 +110,9 @@ const getAllBookRequests = async (req, res) => {
 	const requestedBooks = await Request.find({
 		isRequested: true,
 		isBookReturned: false,
-	}).sort("-createdAt");
+	})
+		.populate({ path: "bookID", select: "name author  catalogueName" })
+		.sort("-createdAt");
 	res.status(StatusCodes.OK).json({
 		success: true,
 		total: requestedBooks.length,

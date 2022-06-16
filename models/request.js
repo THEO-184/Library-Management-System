@@ -7,6 +7,7 @@ const requestsSchema = new Schema(
 		bookID: {
 			type: mongoose.Types.ObjectId,
 			required: true,
+			ref: "Book",
 		},
 		userId: {
 			type: mongoose.Types.ObjectId,
