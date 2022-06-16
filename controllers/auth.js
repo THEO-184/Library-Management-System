@@ -25,7 +25,11 @@ const login = async (req, res) => {
 	if (!isPasswordMathced) {
 		throw new Unauthenticated(`user not authenticated`);
 	}
-	const tokenPayload = { email: user?.email, status: user?.status };
+	const tokenPayload = {
+		email: user?.email,
+		status: user?.status,
+		userId: user?._id,
+	};
 	attacheCookieParser({ res, tokenPayload });
 	res
 		.status(StatusCodes.OK)

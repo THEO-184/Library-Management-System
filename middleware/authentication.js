@@ -8,8 +8,8 @@ const authenticationMiddleware = async (req, res, next) => {
 		if (!token) {
 			throw new Unauthenticated("user not authenticated");
 		}
-		const { email, status } = jwt.verify(token, process.env.SECRET_KEY);
-		req.userDetails = { userEmail: email, status };
+		const { email, status, userId } = jwt.verify(token, process.env.SECRET_KEY);
+		req.userDetails = { userEmail: email, status, userId };
 		next();
 	} catch (error) {
 		throw new Unauthenticated("user not authenticated");
